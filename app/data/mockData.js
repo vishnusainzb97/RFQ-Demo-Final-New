@@ -4,7 +4,7 @@ export const rfpInfo = {
   product: 'API Synthesis Campaign',
   date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
   scale1: '500g & 1kg',
-  scale2: '50 g - 100 g non-GMP batch (with 250 % to 500 % contingency) ',
+  scale2: '2.5 kg GMP Batch with 20% contingency',
   scale3: '5.0 kg GMP Batch with 20% contingency',
   scale4: '10.0 kg GMP with 10% contingency +stability + reference standards'
 };
@@ -157,5 +157,10 @@ export const scenarios = [
 ];
 
 export const workflowSteps = [ { id: 'gmail', icon: 'env', title: 'Gmail Trigger', sub: 'New vendor email', duration: 800 }, { id: 'groq', icon: 'bot', title: 'Llama 3.3', sub: 'Extracts structured data', duration: 1500 }, { id: 'cas', icon: 'db', title: 'API Sync', sub: 'Resolves CAS numbers', duration: 1000 }, { id: 'excel', icon: 'doc', title: 'Generate .xlsx', sub: 'Chemveda RFQ template', duration: 600 } ];
-export const howItWorks = [ { id: 'step1', title: 'Fetch Email', description: 'n8n pulls the threaded email securely from inbox.' }, { id: 'step2', title: 'Data Extraction', description: 'Groq API extracts chemicals, scales, and constraints.' }, { id: 'step3', title: 'CAS Check', description: 'Mocked lookup verifies CAS numbers.' }, { id: 'step4', title: 'Generate Excel', description: 'Creates Chemveda styled formatted Excel spreadsheet.' } ];
+export const howItWorks = [ 
+  { num: '1', icon: '📨', title: 'Fetch Email', desc: 'n8n pulls the threaded email securely from inbox.' }, 
+  { num: '2', icon: '🧠', title: 'Data Extraction', desc: 'Groq API extracts chemicals, scales, and constraints.' }, 
+  { num: '3', icon: '🔬', title: 'CAS Check', desc: 'Mocked lookup verifies CAS numbers.' }, 
+  { num: '4', icon: '📊', title: 'Generate Excel', desc: 'Creates Chemveda styled formatted Excel spreadsheet.' } 
+];
 export const features = [ { icon: 'email', title: 'Automated Inbox Scanning', desc: 'n8n actively monitors emails.' }, { icon: 'parse', title: 'Llama 3.3 Extraction', desc: 'Groq API extracts complex entities.' }, { icon: 'match', title: 'CAS Validation', desc: 'Ensures correct chemical registry.' }, { icon: 'sheet', title: 'Excel Delivery', desc: 'Produces client-ready stylized formats.' } ];
