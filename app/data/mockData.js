@@ -5,8 +5,8 @@ export const rfpInfo = {
   date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
   scale1: '500g & 1kg',
   scale2: '50 g - 100 g non-GMP batch (with 250 % to 500 % contingency) ',
-  scale3: '0.5 kg GMP Batch with 20% contingency',
-  scale4: '1.0 kg GMP with 10% contingency +stability + reference standards'
+  scale3: '5.0 kg GMP Batch with 20% contingency',
+  scale4: '10.0 kg GMP with 10% contingency +stability + reference standards'
 };
 
 export const chemicalsData = [
