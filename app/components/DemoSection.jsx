@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { scenarios } from '../data/mockData';
-import * as XLSX from 'xlsx';
+import { exportToExcel } from '../utils/exportExcel';
 
 export default function DemoSection({ scenarioIndex }) {
   const scenario = scenarios[scenarioIndex % scenarios.length];
@@ -11,89 +11,40 @@ export default function DemoSection({ scenarioIndex }) {
 
   const [data, setData] = useState(initialData);
   const [search, setSearch] = useState('');
-  const [sortCol, setSortCol] = useState(null);
-  const [sortDir, setSortDir] = useState('asc');
-  const [editCell, setEditCell] = useState(null);
-  const [editVal, setEditVal] = useState('');
   const [toast, setToast] = useState(null);
-  const [activeEmail, setActiveEmail] = useState(1);
+  const [activeEmail, setActiveEmail] = useState(0);
 
-  // Reset data when scenario changes
   const [prevIdx, setPrevIdx] = useState(scenarioIndex);
   if (scenarioIndex !== prevIdx) {
     setPrevIdx(scenarioIndex);
     setData(scenario.tableData);
     setSearch('');
-    setSortCol(null);
-    setActiveEmail(1);
+    setActiveEmail(0);
   }
 
   const filtered = useMemo(() => {
     if (!search.trim()) return data;
     const q = search.toLowerCase();
     return data.filter(r =>
-      r.chemicalName.toLowerCase().includes(q) ||
-      r.casNumber.toLowerCase().includes(q) ||
-      r.category.toLowerCase().includes(q) ||
-      r.stage.toLowerCase().includes(q)
+      r.chemicalName?.toLowerCase().includes(q) ||
+      r.casNo?.toLowerCase().includes(q) ||
+      r.category?.toLowerCase().includes(q)
     );
   }, [data, search]);
 
-  const sorted = useMemo(() => {
-    if (!sortCol) return filtered;
-    return [...filtered].sort((a, b) => {
-      let av = a[sortCol], bv = b[sortCol];
-      if (typeof av === 'number') return sortDir === 'asc' ? av - bv : bv - av;
-      av = String(av).toLowerCase(); bv = String(bv).toLowerCase();
-      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-  }, [filtered, sortCol, sortDir]);
-
-  const onSort = (col) => {
-    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
-    else { setSortCol(col); setSortDir('asc'); }
-  };
-
-  const startEdit = (id, col, val) => { setEditCell({ id, col }); setEditVal(String(val)); };
-  const saveEdit = () => {
-    if (!editCell) return;
-    setData(prev => prev.map(r => {
-      if (r.id !== editCell.id) return r;
-      const numCols = ['qty', 'unitCost', 'totalCost', 'pctTotal'];
-      const v = numCols.includes(editCell.col) ? (parseFloat(editVal) || 0) : editVal;
-      const upd = { ...r, [editCell.col]: v };
-      if (editCell.col === 'qty' || editCell.col === 'unitCost')
-        upd.totalCost = parseFloat((upd.qty * upd.unitCost).toFixed(2));
-      return upd;
-    }));
-    setEditCell(null);
-  };
-  const onKey = (e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape') setEditCell(null); };
-
-  const totalCost = data.reduce((s, r) => s + r.totalCost, 0);
-  const stages = [...new Set(data.map(r => r.stage))].length;
-
-  const exportXlsx = useCallback(() => {
-    const rows = [
-      ['RFQ Automation — Extracted Data'], [],
-      ['Date', rfpInfo.date, '', 'Customer', rfpInfo.customer],
-      ['RFP Code', rfpInfo.rfpCode, '', 'Product', rfpInfo.product],
-      ['Quantity', rfpInfo.quantity], [],
-      ['Stage', 'Category', 'Chemical', 'CAS No.', 'Qty', 'Units', 'Rate (₹)', 'Total (₹)', 'Source', 'Country', 'Lead Time'],
-      ...data.map(r => [r.stage, r.categoryLabel, r.chemicalName, r.casNumber, r.qty, r.units, r.unitCost, r.totalCost, r.source, r.country, r.leadTime]),
-      [], ['', '', '', '', '', '', 'TOTAL', totalCost.toFixed(2)],
-    ];
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{ wch: 10 }, { wch: 10 }, { wch: 30 }, { wch: 14 }, { wch: 8 }, { wch: 6 }, { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 10 }];
-    XLSX.utils.book_append_sheet(wb, ws, rfpInfo.rfpCode);
-    XLSX.writeFile(wb, `${rfpInfo.rfpCode}_RFQ_Export.xlsx`);
-    setToast('Excel exported successfully');
+  const handleExport = async () => {
+    try {
+      await exportToExcel(rfpInfo, data);
+      setToast('Premium Excel downloaded successfully!');
+    } catch (err) {
+      console.error(err);
+      setToast('Error generating Excel file.');
+    }
     setTimeout(() => setToast(null), 3000);
-  }, [data, totalCost, rfpInfo]);
+  };
 
-  const fmt = (v) => typeof v === 'number' ? '₹' + v.toLocaleString('en-IN', { minimumFractionDigits: 0 }) : v;
   const catCls = (c) => {
+    if (!c) return 'cell-cat-general';
     const l = c.toLowerCase();
     if (l.includes('ksm') || l.includes('int')) return 'cell-cat-ksm';
     if (l === 'reagent') return 'cell-cat-reagent';
@@ -110,17 +61,6 @@ export default function DemoSection({ scenarioIndex }) {
     return <span dangerouslySetInnerHTML={{ __html: html }} />;
   };
 
-  const cols = [
-    { key: 'stage', label: 'Stage' },
-    { key: 'categoryLabel', label: 'Type' },
-    { key: 'chemicalName', label: 'Chemical Name' },
-    { key: 'casNumber', label: 'CAS No.' },
-    { key: 'qty', label: 'Qty' },
-    { key: 'unitCost', label: 'Rate (₹)' },
-    { key: 'totalCost', label: 'Total (₹)' },
-    { key: 'leadTime', label: 'Lead Time' },
-  ];
-
   return (
     <section className="section demo-section" id="demo">
       <div className="container">
@@ -132,15 +72,14 @@ export default function DemoSection({ scenarioIndex }) {
           transition={{ duration: 0.5 }}
         >
           <div className="section-label">Live Demo</div>
-          <h2 className="section-heading">See the workflow in action</h2>
+          <h2 className="section-heading">Multi-Vendor Quote Consolidation</h2>
           <p className="section-desc">
-            Left: the email thread the workflow reads. Right: the structured output it produces.
-            Hit "Trigger Workflow" above to cycle through different scenarios.
+            Chemveda's engine securely monitors multiple independent vendor emails, automatically grouping competing quotes by verified CAS numbers into a single master summary.
           </p>
         </motion.div>
 
         <div className="demo-grid">
-          {/* Left — Email Thread */}
+          {/* Left — Email */}
           <motion.div
             className="demo-left"
             key={`emails-${scenarioIndex}`}
@@ -151,8 +90,7 @@ export default function DemoSection({ scenarioIndex }) {
             <div className="email-thread">
               <div className="email-thread-header">
                 <div className="email-thread-title">
-                  📨 Email Thread
-                  <span className="email-thread-badge">{emailThread.length} messages</span>
+                  📨 Incoming Vendor Quotes
                 </div>
               </div>
               <div className="email-thread-msgs">
@@ -164,17 +102,15 @@ export default function DemoSection({ scenarioIndex }) {
                     style={{ cursor: 'pointer' }}
                   >
                     <div className="email-msg-head">
-                      <div className={`email-avatar ${msg.role}`}>
+                      <div className={`email-avatar ${msg.role === 'buyer' ? 'buyer' : 'vendor'}`}>
                         {msg.sender.split(' ').map(w => w[0]).join('')}
                       </div>
                       <div className="email-meta">
                         <div className="email-sender">
                           {msg.sender}
-                          <span className={`email-sender-tag ${msg.role}`}>
-                            {msg.role === 'vendor' ? 'Vendor' : 'Buyer'}
-                          </span>
+                          <span className={`email-sender-tag ${msg.role === 'buyer' ? 'buyer' : 'vendor'}`}>{msg.role === 'buyer' ? 'Client' : 'Supplier'}</span>
                         </div>
-                        <div className="email-time">{msg.company} · {msg.time}</div>
+                        <div className="email-time">{msg.company} • {msg.time}</div>
                       </div>
                     </div>
                     <div className="email-body">{renderBody(msg)}</div>
@@ -194,9 +130,9 @@ export default function DemoSection({ scenarioIndex }) {
             <div className="results-panel">
               <div className="results-panel-header">
                 <div className="results-panel-title">
-                  📊 Auto-Generated Output
+                  📑 Extracted Quotation Data
                   <span className="email-thread-badge" style={{ background: 'var(--success-bg)', color: 'var(--success)' }}>
-                    Live
+                    Ready for Export
                   </span>
                 </div>
               </div>
@@ -205,26 +141,7 @@ export default function DemoSection({ scenarioIndex }) {
               <div className="rfp-meta">
                 <div className="rfp-field"><div className="rfp-field-label">RFP Code</div><div className="rfp-field-value">{rfpInfo.rfpCode}</div></div>
                 <div className="rfp-field"><div className="rfp-field-label">Customer</div><div className="rfp-field-value">{rfpInfo.customer}</div></div>
-                <div className="rfp-field"><div className="rfp-field-label">Product</div><div className="rfp-field-value">{rfpInfo.product}</div></div>
-                <div className="rfp-field"><div className="rfp-field-label">Date</div><div className="rfp-field-value">{rfpInfo.date}</div></div>
-                <div className="rfp-field"><div className="rfp-field-label">Quantity</div><div className="rfp-field-value">{rfpInfo.quantity}</div></div>
-                <div className="rfp-field"><div className="rfp-field-label">Stages</div><div className="rfp-field-value">{stages}</div></div>
-              </div>
-
-              {/* Stats */}
-              <div className="stats-row">
-                <div className="stat-pill">
-                  <div className="stat-pill-value">{data.length}</div>
-                  <div className="stat-pill-label">Items Extracted</div>
-                </div>
-                <div className="stat-pill">
-                  <div className="stat-pill-value">{stages}</div>
-                  <div className="stat-pill-label">Synthesis Stages</div>
-                </div>
-                <div className="stat-pill">
-                  <div className="stat-pill-value">{fmt(totalCost)}</div>
-                  <div className="stat-pill-label">Estimated Cost</div>
-                </div>
+                <div className="rfp-field"><div className="rfp-field-label">Vendors Scanned</div><div className="rfp-field-value">4 Active Suppliers</div></div>
               </div>
 
               {/* Controls */}
@@ -232,59 +149,54 @@ export default function DemoSection({ scenarioIndex }) {
                 <div className="tbl-search">
                   <span className="tbl-search-icon">⌕</span>
                   <input
-                    placeholder="Search chemicals, CAS..."
+                    placeholder="Search chemical..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    id="search-input"
                   />
                 </div>
                 <motion.button
-                  className="btn-sm btn-sm-accent"
-                  onClick={exportXlsx}
+                  className="btn-sm btn-sm-accent primary-export-btn"
+                  onClick={handleExport}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  id="export-btn"
+                  style={{ background: '#107c41', color: 'white', border: 'none', padding: '0.6rem 1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  ↓ Export .xlsx
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  Generate Official Excel
                 </motion.button>
               </div>
 
-              {/* Table */}
-              <div style={{ overflowX: 'auto' }}>
-                <table className="data-tbl" id="rfq-table">
+              {/* Minimal Table Overview */}
+              <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
+                <p style={{fontSize: '0.8rem', color: '#666', margin: '0 0 10px 10px'}}>* Showing simplified overview. Grouped competitor insights available in Excel.</p>
+                <table className="data-tbl">
                   <thead>
                     <tr>
-                      {cols.map(c => (
-                        <th key={c.key} onClick={() => onSort(c.key)} className={sortCol === c.key ? 'sorted' : ''}>
-                          {c.label}
-                          <span className="sort-arrow">{sortCol === c.key ? (sortDir === 'asc' ? '↑' : '↓') : ''}</span>
-                        </th>
-                      ))}
+                      <th>Chemical / Substance</th>
+                      <th>CAS No.</th>
+                      <th style={{ textAlign: 'center' }}>Quotes Available</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {sorted.map((r) => (
-                      <tr key={r.id}>
-                        <td className="cell-stage">{r.stage}</td>
-                        <td><span className={`cell-cat ${catCls(r.categoryLabel)}`}>{r.categoryLabel}</span></td>
-                        <td className="cell-editable" onClick={() => startEdit(r.id, 'chemicalName', r.chemicalName)}>
-                          {editCell?.id === r.id && editCell?.col === 'chemicalName'
-                            ? <input className="cell-input" value={editVal} onChange={e => setEditVal(e.target.value)} onBlur={saveEdit} onKeyDown={onKey} autoFocus />
-                            : r.chemicalName}
+                    {filtered.map((r, idx) => (
+                      <tr key={idx}>
+                        <td style={{ fontWeight: 500 }}>
+                          {r.chemicalName}
+                          <br/><span className={`cell-cat ${catCls(r.category)}`} style={{marginTop: '4px', display:'inline-block'}}>{r.category}</span>
                         </td>
-                        <td className="cell-cas">{r.casNumber}</td>
-                        <td className="cell-editable" onClick={() => startEdit(r.id, 'qty', r.qty)}>
-                          {editCell?.id === r.id && editCell?.col === 'qty'
-                            ? <input className="cell-input" value={editVal} onChange={e => setEditVal(e.target.value)} onBlur={saveEdit} onKeyDown={onKey} autoFocus type="number" />
-                            : r.qty}
+                        <td className="cell-cas" style={{ verticalAlign: 'middle' }}>{r.casNo || 'N/A'}</td>
+                        <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                          <span style={{ 
+                            background: r.vendorQuotes?.length > 2 ? '#dcfce7' : '#fef9c3', 
+                            color: r.vendorQuotes?.length > 2 ? '#166534' : '#854d0e',
+                            padding: '4px 10px', 
+                            borderRadius: '12px', 
+                            fontSize: '0.85rem',
+                            fontWeight: '600'
+                          }}>
+                            {r.vendorQuotes?.length || 0} Quotes
+                          </span>
                         </td>
-                        <td className="cell-editable cell-cost" onClick={() => startEdit(r.id, 'unitCost', r.unitCost)}>
-                          {editCell?.id === r.id && editCell?.col === 'unitCost'
-                            ? <input className="cell-input" value={editVal} onChange={e => setEditVal(e.target.value)} onBlur={saveEdit} onKeyDown={onKey} autoFocus type="number" />
-                            : fmt(r.unitCost)}
-                        </td>
-                        <td className="cell-cost">{fmt(r.totalCost)}</td>
-                        <td>{r.leadTime}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -298,7 +210,8 @@ export default function DemoSection({ scenarioIndex }) {
       <AnimatePresence>
         {toast && (
           <motion.div className="toast" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}>
-            ✓ {toast}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            {toast}
           </motion.div>
         )}
       </AnimatePresence>

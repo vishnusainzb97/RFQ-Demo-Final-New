@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/RFQ-Chemveda-Demo',
-  assetPrefix: '/RFQ-Chemveda-Demo/',
+  basePath: '/RFQ-Demo-Final-New',
+  assetPrefix: '/RFQ-Demo-Final-New/',
   images: {
     unoptimized: true,
   },
