@@ -22,7 +22,11 @@ export const chemicalsData = [
     moles: 2.906,
     moleEq: 1,
     ratio: 1,
-    summaryQty: '4kg/10kg', // Used for summary sheet
+    summaryQty: '4kg/10kg',
+    catalogNo: 'CAT-BA-0591',
+    warehouseStock: '2.3 kg',
+    purity: '≥98%',
+    storageCondition: 'Room temperature, dry',
     vendorQuotes: [
       { vendor: 'Angene', price: '976$/3.9kg ; 2345$/10kg', leadTime: '4kg=3-4Weeks ; 10kg=6-7Weeks', remarks: '' },
       { vendor: 'Avra', price: '840$/3.9kg', leadTime: '2-3Weeks', remarks: '' },
@@ -48,7 +52,11 @@ export const chemicalsData = [
     moles: 3.368,
     moleEq: 1.5,
     ratio: 1.51,
-    summaryQty: '3.2kg/7.9kg', // Used for summary sheet
+    summaryQty: '3.2kg/7.9kg',
+    catalogNo: 'CAT-PD-3375',
+    warehouseStock: '500 g',
+    purity: '≥99%',
+    storageCondition: 'Inert atmosphere, 2-8°C',
     vendorQuotes: [
       { vendor: 'ABC', price: '245$/3.2kg ; 460$/7.9kg', leadTime: '2-3Weeks', remarks: '' },
       { vendor: 'XYZ', price: '90$/kg for 3.2kg ; 70$/kg for 7.9kg', leadTime: '2-3Weeks', remarks: '' },
@@ -72,7 +80,11 @@ export const chemicalsData = [
     moles: null,
     moleEq: 10,
     ratio: 8.8,
-    summaryQty: '6.3kg/15.6kg', // Used for summary sheet
+    summaryQty: '6.3kg/15.6kg',
+    catalogNo: 'CAT-TL-1088',
+    warehouseStock: '45 kg (drum)',
+    purity: 'ACS grade ≥99.5%',
+    storageCondition: 'Flammable storage, <25°C',
     vendorQuotes: [
       { vendor: 'Commercial', price: '4870$/6.3KG ; 11400$/15.6KG', leadTime: '2-3Weeks', remarks: '' },
       { vendor: 'ABC', price: '780$/kg for 6.3kg ; 750$/kg for 15.6kg', leadTime: '2-3Weeks', remarks: '' },
@@ -95,7 +107,11 @@ export const chemicalsData = [
     moles: 8.07,
     moleEq: 1.2,
     ratio: 1.37,
-    summaryQty: '2.8kg/7kg', // Used for summary sheet
+    summaryQty: '2.8kg/7kg',
+    catalogNo: 'CAT-DC-7509',
+    warehouseStock: '12 kg',
+    purity: 'HPLC grade ≥99.8%',
+    storageCondition: 'Cool, ventilated area',
     vendorQuotes: [
       { vendor: 'Avra', price: '175$/2.8kg ; 355$/7kg', leadTime: '2-3Weeks', remarks: '' },
       { vendor: 'Senn Chem', price: '100$/kg for 2.8kg ; 70$/kg for 7kg', leadTime: '3-4Weeks', remarks: '' },
@@ -116,7 +132,7 @@ export const mockEmailThread = [
     sender: 'Sarah Jenkins',
     company: 'Novatek Pharma',
     time: '2 days ago',
-    body: `Hi Partners,\n\nPlease provide scaling quotes for 4kg and 10kg batches of 4-Bromoaniline, along with other intermediates detailed in the attachment for RFQ-NOVA-2026. Lead times are critical.\n\nThanks,\nSarah`,
+    body: `Hi Partners,\\n\\nPlease provide scaling quotes for 4kg and 10kg batches of 4-Bromoaniline, along with other intermediates detailed in the attachment for RFQ-NOVA-2026. Lead times are critical.\\n\\nThanks,\\nSarah`,
     highlights: ['4kg', '10kg', '4-Bromoaniline']
   },
   {
@@ -125,7 +141,7 @@ export const mockEmailThread = [
     sender: 'Angene Sales',
     company: 'Angene',
     time: 'Yesterday',
-    body: `Dear Sarah,\n\nWe can supply the requested 4-Bromoaniline. \nRate: 976$/3.9kg or 2345$/10kg.\nLead times would be 3-4 Weeks for 4kg, and 6-7 Weeks for 10kg batches.\n\nRegards,\nAngene Team`,
+    body: `Dear Sarah,\\n\\nWe can supply the requested 4-Bromoaniline. \\nRate: 976$/3.9kg or 2345$/10kg.\\nLead times would be 3-4 Weeks for 4kg, and 6-7 Weeks for 10kg batches.\\n\\nRegards,\\nAngene Team`,
     highlights: ['976$/3.9kg', '2345$/10kg', '3-4 Weeks', '6-7 Weeks']
   },
   {
@@ -134,7 +150,7 @@ export const mockEmailThread = [
     sender: 'Senn Chem Rep',
     company: 'Senn Chem',
     time: 'Yesterday',
-    body: `Hi Sarah,\nOur quote for the 4-Bromoaniline is 270$/kg for 3.9kg, and 200$/kg for 10kg. Lead time is 5-6 weeks for the larger batch.\nFor the DCM, we can do 100$/kg for 2.8kg.\n\nBest, Senn`,
+    body: `Hi Sarah,\\nOur quote for the 4-Bromoaniline is 270$/kg for 3.9kg, and 200$/kg for 10kg. Lead time is 5-6 weeks for the larger batch.\\nFor the DCM, we can do 100$/kg for 2.8kg.\\n\\nBest, Senn`,
     highlights: ['270$/kg', '200$/kg', '100$/kg']
   },
   {
@@ -143,7 +159,7 @@ export const mockEmailThread = [
     sender: 'Avra Desk',
     company: 'Avra',
     time: '5 hours ago',
-    body: `Greetings,\n\nPalladium(II) acetate is available: 160$/3200G and 316$/7900G (2-3 Weeks).\nFor Toluene we can't compete right now but we can do DCM at 175$/2.8kg and 355$/7kg.\n\nLet us know,\nAvra`,
+    body: `Greetings,\\n\\nPalladium(II) acetate is available: 160$/3200G and 316$/7900G (2-3 Weeks).\\nFor Toluene we can't compete right now but we can do DCM at 175$/2.8kg and 355$/7kg.\\n\\nLet us know,\\nAvra`,
     highlights: ['160$/3200G', '316$/7900G', '175$/2.8kg']
   }
 ];
@@ -156,11 +172,25 @@ export const scenarios = [
   }
 ];
 
-export const workflowSteps = [ { id: 'gmail', icon: 'env', title: 'Gmail Trigger', sub: 'New vendor email', duration: 800 }, { id: 'groq', icon: 'bot', title: 'Llama 3.3', sub: 'Extracts structured data', duration: 1500 }, { id: 'cas', icon: 'db', title: 'API Sync', sub: 'Resolves CAS numbers', duration: 1000 }, { id: 'excel', icon: 'doc', title: 'Generate .xlsx', sub: 'Chemveda RFQ template', duration: 600 } ];
-export const howItWorks = [ 
-  { num: '1', icon: '📨', title: 'Fetch Email', desc: 'n8n pulls the threaded email securely from inbox.' }, 
-  { num: '2', icon: '🧠', title: 'Data Extraction', desc: 'Groq API extracts chemicals, scales, and constraints.' }, 
-  { num: '3', icon: '🔬', title: 'CAS Check', desc: 'Mocked lookup verifies CAS numbers.' }, 
-  { num: '4', icon: '📊', title: 'Generate Excel', desc: 'Creates Chemveda styled formatted Excel spreadsheet.' } 
+export const workflowSteps = [
+  { id: 'gmail', icon: 'email', title: 'Gmail Trigger', sub: 'New vendor email', duration: 800 },
+  { id: 'groq', icon: 'parse', title: 'Llama 3.3', sub: 'Extracts structured data', duration: 1500 },
+  { id: 'cas', icon: 'match', title: 'API Sync', sub: 'Resolves CAS numbers', duration: 1000 },
+  { id: 'excel', icon: 'sheet', title: 'Generate .xlsx', sub: 'Chemveda RFQ template', duration: 600 }
 ];
-export const features = [ { icon: 'email', title: 'Automated Inbox Scanning', desc: 'n8n actively monitors emails.' }, { icon: 'parse', title: 'Llama 3.3 Extraction', desc: 'Groq API extracts complex entities.' }, { icon: 'match', title: 'CAS Validation', desc: 'Ensures correct chemical registry.' }, { icon: 'sheet', title: 'Excel Delivery', desc: 'Produces client-ready stylized formats.' } ];
+
+export const howItWorks = [
+  { num: '1', icon: '📨', title: 'Fetch Email', desc: 'n8n pulls the threaded email securely from inbox.' },
+  { num: '2', icon: '🧠', title: 'Data Extraction', desc: 'Groq API extracts chemicals, scales, and constraints.' },
+  { num: '3', icon: '🔬', title: 'CAS Check', desc: 'Mocked lookup verifies CAS numbers.' },
+  { num: '4', icon: '📊', title: 'Generate Excel', desc: 'Creates Chemveda styled formatted Excel spreadsheet.' }
+];
+
+export const features = [
+  { icon: 'email', title: 'Automated Inbox Scanning', desc: 'n8n actively monitors your email inbox for new vendor quotes and procurement communications in real time.', size: 'lg', color: 'blue', visual: 'IMAP Trigger → Parse → Route → Store\n→ Auto-classify: RFQ / Quote / Follow-up' },
+  { icon: 'parse', title: 'Llama 3.3 Extraction', desc: 'Groq API extracts complex chemical entities, pricing, lead times, and constraints from unstructured email text.', size: 'sm', color: 'purple' },
+  { icon: 'match', title: 'CAS Validation', desc: 'Ensures correct chemical registry numbers are matched and verified against authoritative databases.', size: 'sm', color: 'green' },
+  { icon: 'sheet', title: 'Excel Delivery', desc: 'Produces client-ready stylized Excel files with conditional formatting, multi-sheet workbooks, and audit trails.', size: 'sm', color: 'amber' },
+  { icon: 'lock', title: 'Data Privacy & Compliance', desc: 'All processing runs locally on your infrastructure. No chemical data leaves your network.', size: 'sm', color: 'slate' },
+  { icon: 'zap', title: 'End-to-End Automation', desc: 'From email receipt to spreadsheet delivery — zero manual intervention required in the entire pipeline.', size: 'lg', color: 'teal', visual: 'Email → AI Parse → CAS Verify → Excel\nProcessing time: ~4 seconds average' },
+];

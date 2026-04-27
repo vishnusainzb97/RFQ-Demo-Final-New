@@ -84,23 +84,14 @@ export default function HeroSection({ onTrigger, scenarioIndex }) {
             </motion.div>
 
             {/* Scenario indicator */}
-            <motion.div
-              variants={fade}
-              style={{ marginTop: '1.5rem', display: 'flex', gap: '6px', alignItems: 'center' }}
-            >
+            <motion.div className="scenario-dots" variants={fade}>
               {scenarios.map((s, i) => (
                 <div
-                  key={i}
-                  style={{
-                    width: i === (scenarioIndex % scenarios.length) ? '24px' : '6px',
-                    height: '6px',
-                    borderRadius: '3px',
-                    background: i === (scenarioIndex % scenarios.length) ? 'var(--accent)' : 'var(--ink-20)',
-                    transition: 'all 0.3s ease',
-                  }}
+                  key={`scenario-${s.rfpInfo.rfpCode}-${i}`}
+                  className={`scenario-dot ${i === (scenarioIndex % scenarios.length) ? 'active' : ''}`}
                 />
               ))}
-              <span style={{ fontSize: '0.72rem', color: 'var(--ink-40)', marginLeft: '8px' }}>
+              <span className="scenario-label">
                 {scenario.rfpInfo.customer} — {scenario.rfpInfo.product}
               </span>
             </motion.div>
@@ -116,8 +107,8 @@ export default function HeroSection({ onTrigger, scenarioIndex }) {
             <div className="hero-visual-card">
               <div className="hero-glow" />
               <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-40)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: running ? '#22c55e' : 'var(--ink-20)', boxShadow: running ? '0 0 8px #22c55e' : 'none', transition: 'all 0.3s' }} />
+                <div className="wf-status-label">
+                  <span className={`wf-status-dot ${running ? 'active' : ''}`} />
                   {running ? 'Workflow Running' : 'Workflow Ready'}
                 </div>
 

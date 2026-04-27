@@ -1,8 +1,11 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 export default function Footer() {
+  const scrollToTop = (e) => {
+    e.preventDefault();
+    document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <footer className="footer">
       <div className="container">
@@ -15,8 +18,8 @@ export default function Footer() {
             © {new Date().getFullYear()} Chemveda · Built with Next.js & n8n
           </span>
           <div className="footer-links">
-            <a href="https://github.com/vishnusainzb97/RFQ-Chemveda-Demo" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="#hero">Back to top ↑</a>
+            <a href="https://github.com/vishnusainzb97/RFQ-Demo-Final-New" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="#hero" onClick={scrollToTop}>Back to top ↑</a>
           </div>
         </div>
       </div>

@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('rfq-theme') || 'light';
+    const saved = localStorage.getItem('rfq-theme') || 'dark';
     setTheme(saved);
     document.documentElement.setAttribute('data-theme', saved);
   }, []);

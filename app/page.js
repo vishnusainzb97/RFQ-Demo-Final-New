@@ -9,6 +9,14 @@ import DemoSection from './components/DemoSection';
 import FeaturesSection from './components/FeaturesSection';
 import Footer from './components/Footer';
 
+const trustItems = [
+  { key: 'n8n', icon: '⚡', label: 'n8n Workflow Engine' },
+  { key: 'local', icon: '🔒', label: 'Runs Locally' },
+  { key: 'excel', icon: '📊', label: 'Auto Excel Export' },
+  { key: 'cas', icon: '🧪', label: 'CAS Matching' },
+  { key: 'email', icon: '📧', label: 'Email-Triggered' },
+];
+
 export default function Home() {
   const [scenarioIndex, setScenarioIndex] = useState(0);
 
@@ -29,23 +37,17 @@ export default function Home() {
         <div className="trust-bar">
           <div className="container">
             <div className="trust-bar-inner">
-              {[
-                ['⚡', 'n8n Workflow Engine'],
-                ['🔒', 'Runs Locally'],
-                ['📊', 'Auto Excel Export'],
-                ['🧪', 'CAS Matching'],
-                ['📧', 'Email-Triggered'],
-              ].map(([icon, label], i) => (
+              {trustItems.map((item, i) => (
                 <motion.div
                   className="trust-item"
-                  key={i}
+                  key={item.key}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <div className="trust-icon">{icon}</div>
-                  {label}
+                  <div className="trust-icon">{item.icon}</div>
+                  {item.label}
                 </motion.div>
               ))}
             </div>
@@ -74,7 +76,7 @@ export default function Home() {
               </p>
               <motion.a
                 className="btn-white"
-                href="https://github.com/vishnusainzb97/RFQ-Chemveda-Demo"
+                href="https://github.com/vishnusainzb97/RFQ-Demo-Final-New"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}
